@@ -15,7 +15,6 @@ app.get('/', (req, res) => {
 app.use((req, res, next) => {
     const error = new Error('Rota não encontrada!');
     error.status = 404;
-    logger.log('error', error);
     next(error);
 });
 
