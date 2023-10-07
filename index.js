@@ -4,6 +4,7 @@ const app = express();
 const cors = require("cors");
 const port = process.env.SERVER_PORT;
 const logger = require("./config/logger");
+require("./config/dbConnection");
 
 app.use(cors());
 app.use(express.json());

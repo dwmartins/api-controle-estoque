@@ -1,11 +1,11 @@
 const winston = require('winston');
+const helper = require("../src/utilities/helper");
 
 const logger = winston.createLogger({
   level: 'info',
   format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.printf(({ timestamp, level, message }) => {
-      return `${timestamp} ${level}: ${message}`;
+    winston.format.printf(({ level, message }) => {
+      return `${level}: ${message} ${helper.getDateTime()}`;
     })
   ),
   transports: [
