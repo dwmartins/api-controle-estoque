@@ -15,7 +15,7 @@ class UserCtrl {
             if(!emailExists.length) {
                 const password = await helper.encodePassword(userData.user_password);
                 userData.user_password = password;
-
+                
                 await userDAO.newUser(userData);
                 this.sendResponse(res, 200, userData);
             } else {

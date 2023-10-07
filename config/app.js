@@ -10,11 +10,11 @@ const userRoute = require("../src/routes/user");
 createServer = () => {
     const app = express();
 
-    // Routes
-    app.use('/user/', userRoute);
-
     app.use(cors());
     app.use(express.json());
+    
+    // Routes
+    app.use('/user', userRoute);
 
     app.get('/', (req, res) => {
         res.status(200).sendFile(path.resolve('index.html'));

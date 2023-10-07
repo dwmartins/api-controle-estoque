@@ -5,7 +5,7 @@ class UserDAO {
 
     newUser = async (user) => {
         try {
-            this.sql = `INSERT INTO(
+            this.sql = `INSERT INTO users(
                             user_nome,
                             user_sobrenome,
                             user_email,
@@ -32,6 +32,7 @@ class UserDAO {
             await db.pool.query(this.sql, values);
 
         } catch (error) {
+            console.log(error)
             logger.log('error', `Erro criar o usuário ${user.user_nome}`);
         }
     }
