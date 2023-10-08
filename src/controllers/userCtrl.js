@@ -16,16 +16,26 @@ class UserCtrl {
                 const password = await helper.encodePassword(userData.user_password);
                 userData.user_password = password;
                 
-                await userDAO.newUser(userData);
-                this.sendResponse(res, 200, userData);
+                await userDAO.newUserDAO(userData);
+                this.sendResponse(res, 201, userData);
             } else {
                 const response = {alert: `Este e-mail já está em uso.`};
                 this.sendResponse(res, 200, response);
             }
             
         } catch (error) {
-            logger.log('error', `Erro ao criar o usuário: ${error}`);
+            logger.log('error', `Erro ao criar o usuário: ${error.message}`);
             this.sendResponse(res, 500, error);
+        }
+    }
+
+    updateUser = async (req, res) => {
+        const userData = req.body;
+
+        if(await userDAO.updateUserDAO(userData)) {
+            this.sendResponse(res, 201, {success: `Usuário atualizado com sucesso.`});
+        } else {
+            this.sendResponse(res, 500, {error: `Erro ao atualizar o usuário.`});
         }
     }
 
