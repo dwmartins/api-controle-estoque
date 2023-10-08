@@ -14,7 +14,7 @@ class NewTableUsers {
                     user_token VARCHAR(255) NOT NULL,
                     user_ativo CHAR(1),
                     user_tipo VARCHAR(50),
-                    user_foto VARCHAR(255),
+                    user_foto BLOB,
                     user_createdAt DATETIME,
                     user_disable DATETIME,
                     user_disable_by INT,
