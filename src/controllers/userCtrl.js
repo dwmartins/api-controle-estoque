@@ -1,32 +1,36 @@
 const userDAO = require("../models/userDAO");
 const helper = require("../utilities/helper");
-const logger = require("../../config/logger");
 
 class UserCtrl {
 
     createUser = async (req, res) => {
-        try {
-            const userData = req.body;
         
-            const emailExists = await userDAO.existingEmail(userData.user_email);
-            const token = helper.newCrypto();
-            userData.user_token = token;
+        const userData = req.body;
+    
+        const emailExists = await userDAO.existingEmail(userData.user_email);
 
-            if(!emailExists.length) {
-                const password = await helper.encodePassword(userData.user_password);
-                userData.user_password = password;
-                
-                await userDAO.newUserDAO(userData);
+        if(emailExists.error) {
+            this.sendResponse(res, 500, {error: `Erro ao criar o usuário`});
+            return;
+        }
+
+        const token = helper.newCrypto();
+        userData.user_token = token;
+
+        if(!emailExists.length && emailExists) {
+            const password = await helper.encodePassword(userData.user_password);
+            userData.user_password = password;
+            
+            if(await userDAO.newUserDAO(userData)) {
                 this.sendResponse(res, 201, userData);
             } else {
-                const response = {alert: `Este e-mail já está em uso.`};
-                this.sendResponse(res, 200, response);
+                this.sendResponse(res, 500, {error: `Erro ao criar o usuário`});
             }
-            
-        } catch (error) {
-            logger.log('error', `Erro ao criar o usuário: ${error.message}`);
-            this.sendResponse(res, 500, error);
-        }
+
+        } else {
+            const response = {alert: `Este e-mail já está em uso.`};
+            this.sendResponse(res, 200, response);
+        }  
     }
 
     updateUser = async (req, res) => {

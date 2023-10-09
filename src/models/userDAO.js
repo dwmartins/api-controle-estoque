@@ -31,8 +31,8 @@ class UserDAO {
 
             await db.pool.query(this.sql, values);
 
+            return true;
         } catch (error) {
-            console.log(error)
             logger.log('error', `Erro criar o usuário: ${error.message}`);
             return false;
         }
