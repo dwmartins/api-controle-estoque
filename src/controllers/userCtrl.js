@@ -59,9 +59,11 @@ class UserCtrl {
             const password_hash = await helper.comparePasswordHash(user_password, user[0].user_password);
 
             if(password_hash && !password_hash.error) {
+                // aqui cria o token com um tempo de expiração de 1 hora;
+                const expiresIn = '1h';
                 const payload  = { email: user[0].user_email };
-                const token = jwt.sign(payload, user[0].user_token);
-                
+                const token = jwt.sign(payload, user[0].user_token, { expiresIn });
+
                 delete user[0].user_token;
                 delete user[0].user_password;
 
