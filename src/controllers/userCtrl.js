@@ -9,11 +9,6 @@ class UserCtrl {
     
         const emailExists = await userDAO.existingEmail(userData.user_email);
 
-        if(emailExists.error) {
-            this.sendResponse(res, 500, {error: `Erro ao criar o usuário`});
-            return;
-        }
-
         const token = helper.newCrypto();
         userData.user_token = token;
 
