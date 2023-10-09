@@ -29,7 +29,7 @@ class Helper {
             const hash = await bcrypt.hash(password, 10);
             return hash
         } catch (error) {
-            return {erro: error, msg: `Erro ao codificar a senha.`}
+            return false;
         }
     }
     
