@@ -14,7 +14,7 @@ createServer = () => {
     app.use(express.json());
     
     // Routes
-    app.use('/user', userRoute);
+    app.use('/usuario', userRoute);
 
     app.get('/', (req, res) => {
         res.status(200).sendFile(path.resolve('index.html'));

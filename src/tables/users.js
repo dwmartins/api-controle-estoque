@@ -16,9 +16,10 @@ class NewTableUsers {
                     user_tipo VARCHAR(50),
                     user_foto BLOB,
                     user_createdAt DATETIME,
-                    user_disable DATETIME,
-                    user_disable_by INT,
-                    user_updateAt DATETIME);`
+                    user_updateAt DATETIME,
+                    user_delete DATETIME,
+                    user_delete_by INT,
+                    user_delete_date DATETIME)`;
 
             await db.pool.query(this.sql);
         } catch (error) {
