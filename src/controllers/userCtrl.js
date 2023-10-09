@@ -30,12 +30,18 @@ class UserCtrl {
 
     updateUser = async (req, res) => {
         const userData = req.body;
+        const statusCode = users ? 201 : 500;
+        const response = await userDAO.updateUserDAO(userData) ? {success: `Usuário atualizado com sucesso.`} : {error: `Erro ao atualizar o usuário.`};
 
-        if(await userDAO.updateUserDAO(userData)) {
-            this.sendResponse(res, 201, {success: `Usuário atualizado com sucesso.`});
-        } else {
-            this.sendResponse(res, 500, {error: `Erro ao atualizar o usuário.`});
-        }
+        this.sendResponse(res, statusCode, response);
+    }
+
+    searchAllUsers = async (req, res) => {
+        const users = await userDAO.getAllUsers();
+        const statusCode = users ? 200 : 500;
+        const response = users ? users : {error: `Erro ao buscar os usuários.`};
+
+        this.sendResponse(res, statusCode, response);
     }
 
     sendResponse = (res, statusCode, msg) => {

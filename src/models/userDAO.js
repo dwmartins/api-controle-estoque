@@ -73,6 +73,21 @@ class UserDAO {
             return false;
         }
     }
+
+    getAllUsers = async () => {
+        try {
+            this.sql = `SELECT *
+                        FROM users 
+                        WHERE user_ativo = 'S'
+                        AND user_delete IS NULL`;
+            
+            const users = await db.pool.query(this.sql);
+            return users[0];
+        } catch (error) {
+            logger.log('error', `Erro ao buscar todos os usuários: ${error.message}'`);
+            return false;
+        }
+    }
     
     existingEmail = async (user_email) => {
         try {
