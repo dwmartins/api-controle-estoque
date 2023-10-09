@@ -96,8 +96,25 @@ class UserDAO {
             const result = await db.pool.query(this.sql, user_email);
             return result[0];
         } catch (error) {
-            logger.log('error', `Erro criar o usuário ${user_email}`);
+            logger.log('error', `Erro ao verificar se o e-mail existe: ${error.message}`);
             return false;
+        }
+    }
+
+    searchUserByEmail = async (user_email) => {
+        try {
+            this.sql = ` SELECT *
+                            FROM users
+                            WHERE user_ativo = 'S'
+                            AND user_delete IS NULL
+                            AND user_email = ?`;
+
+            const userEmail = await db.pool.query(this.sql, user_email)
+
+            return userEmail[0];
+        } catch (error) {
+            logger.log('error', `Erro ao buscar o usuário pelo e-mail: ${error.message}`);
+            return {error: error};
         }
     }
 }

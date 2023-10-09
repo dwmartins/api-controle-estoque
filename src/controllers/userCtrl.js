@@ -1,5 +1,6 @@
 const userDAO = require("../models/userDAO");
 const helper = require("../utilities/helper");
+const jwt = require('jsonwebtoken');
 
 class UserCtrl {
 
@@ -42,6 +43,42 @@ class UserCtrl {
         const response = users ? users : {error: `Erro ao buscar os usuários.`};
 
         this.sendResponse(res, statusCode, response);
+    }
+
+    userLogin = async (req, res) => {
+        const {user_email, user_password} = req.body;
+
+        const user = await userDAO.searchUserByEmail(user_email);
+
+        if(user.error) {
+            this.sendResponse(res, 500, {error: `Erro ao realizar o login.`});
+            return;
+        }
+
+        if(user.length) {
+            const password_hash = await helper.comparePasswordHash(user_password, user[0].user_password);
+
+            if(password_hash && !password_hash.error) {
+                const payload  = { email: user[0].user_email };
+                const token = jwt.sign(payload, user[0].user_token);
+                
+                delete user[0].user_token;
+                delete user[0].user_password;
+
+                const data = {success: true, user_token: token, userData: user};
+                this.sendResponse(res, 200, data);
+                return;
+            } else if(!password_hash && !password_hash.error){
+                this.sendResponse(res, 200, {alert: `Usuário ou senha inválidos.`});
+                return;
+            } else {
+                this.sendResponse(res, 500, {error: `Erro ao realizar o login.`});
+                return;
+            }
+
+        } else {
+            this.sendResponse(res, 200, {alert: `Usuário ou senha inválidos.`});
+        }
     }
 
     sendResponse = (res, statusCode, msg) => {
