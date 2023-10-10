@@ -89,7 +89,7 @@ class UserDAO {
                         WHERE
                         user_delete IS NULL
                         ${this.where}`;
-            console.log(this.sql)
+
             const users = await db.pool.query(this.sql);
             return users[0];
         } catch (error) {
