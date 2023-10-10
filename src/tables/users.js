@@ -23,12 +23,30 @@ class NewTableUsers {
 
             await db.pool.query(this.sql);
         } catch (error) {
-            logger.log('error', `Erro ao criar a tabela de usuários: ${error}`)
+            logger.log('error', `Erro ao criar a tabela de usuários: ${error.message}`)
+        }
+    }
+
+    tableUserAcesso = async () => {
+        try {
+            await db.pool.query(`
+                CREATE TABLE IF NOT EXISTS user_acesso (
+                    aces_id INT AUTO_INCREMENT PRIMARY KEY,
+                    aces_user_id INT NOT NULL,
+                    aces_user_email VARCHAR(100) NOT NULL,
+                    aces_user_ip VARCHAR(255) NOT NULL,
+                    aces_createdAt DATETIME,
+                    FOREIGN KEY (aces_user_id) REFERENCES users(user_id)
+                );`
+            );
+        } catch (error) {
+            logger.log('error', `Erro ao criar a tabela de ( user_acesso ): ${error.message}`)
         }
     }
 
     createAll = async () => {
         await this.tableUsers();
+        await this.tableUserAcesso();
     }
 }
 

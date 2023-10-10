@@ -117,6 +117,19 @@ class UserDAO {
             return {error: error};
         }
     }
+
+    userAccess = async (user_id, user_email, user_ip, user_acesso_date) => {
+        try {
+            this.sql = `INSERT INTO user_acesso (aces_user_id, aces_user_email, aces_user_ip, aces_createdAt) VALUES (?, ?, ?, ?)`;
+            const values = [user_id, user_email, user_ip, user_acesso_date];
+
+            await db.pool.query(this.sql, values);
+            return true;
+        } catch (error) {
+            logger.log('error', `Erro ao salvar o acesso do usuário: ${error.message}`);
+            return false;
+        }
+    }
 }
 
 module.exports = new UserDAO();

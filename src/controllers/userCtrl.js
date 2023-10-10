@@ -67,6 +67,9 @@ class UserCtrl {
                 delete user[0].user_token;
                 delete user[0].user_password;
 
+                const user_ip = req.ip.replace('::ffff:', '');
+                await userDAO.userAccess(user[0].user_id, user_email, user_ip, new Date())
+
                 const data = {success: true, user_token: token, userData: user};
                 this.sendResponse(res, 200, data);
                 return;
