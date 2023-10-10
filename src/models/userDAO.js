@@ -74,13 +74,22 @@ class UserDAO {
         }
     }
 
-    getAllUsersDAO = async () => {
+    getAllUsersDAO = async (where) => {
+        this.where = '';
+
+        if(where.user_ativo == 'S') {
+            this.where += ` AND user_ativo = 'S'`;
+        } else if (where.user_ativo == 'N') {
+            this.where += ` AND user_ativo = 'N'`;
+        }
+
         try {
             this.sql = `SELECT *
                         FROM users 
-                        WHERE user_ativo = 'S'
-                        AND user_delete IS NULL`;
-            
+                        WHERE
+                        user_delete IS NULL
+                        ${this.where}`;
+            console.log(this.sql)
             const users = await db.pool.query(this.sql);
             return users[0];
         } catch (error) {

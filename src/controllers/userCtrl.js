@@ -38,7 +38,7 @@ class UserCtrl {
     }
 
     searchAllUsers = async (req, res) => {
-        const users = await userDAO.getAllUsersDAO();
+        const users = await userDAO.getAllUsersDAO(req.query);
         const statusCode = users ? 200 : 500;
         const response = users ? users : {error: `Erro ao buscar os usuários.`};
 
