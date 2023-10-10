@@ -74,7 +74,7 @@ class UserDAO {
         }
     }
 
-    getAllUsers = async () => {
+    getAllUsersDAO = async () => {
         try {
             this.sql = `SELECT *
                         FROM users 
@@ -89,7 +89,7 @@ class UserDAO {
         }
     }
     
-    existingEmail = async (user_email) => {
+    existingEmailDAO = async (user_email) => {
         try {
             this.sql = `SELECT user_email FROM users WHERE user_email = ?`;
 
@@ -101,7 +101,7 @@ class UserDAO {
         }
     }
 
-    searchUserByEmail = async (user_email) => {
+    searchUserByEmailDAO = async (user_email) => {
         try {
             this.sql = ` SELECT *
                             FROM users
@@ -118,7 +118,7 @@ class UserDAO {
         }
     }
 
-    userAccess = async (user_id, user_email, user_ip, user_acesso_date) => {
+    userAccessDAO = async (user_id, user_email, user_ip, user_acesso_date) => {
         try {
             this.sql = `INSERT INTO user_acesso (aces_user_id, aces_user_email, aces_user_ip, aces_createdAt) VALUES (?, ?, ?, ?)`;
             const values = [user_id, user_email, user_ip, user_acesso_date];
