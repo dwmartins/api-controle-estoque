@@ -8,7 +8,7 @@ class UserCtrl {
         
         const userData = req.body;
     
-        const emailExists = await userDAO.existingEmail(userData.user_email);
+        const emailExists = await userDAO.existingEmailDAO(userData.user_email);
 
         const token = helper.newCrypto();
         userData.user_token = token;
@@ -38,7 +38,7 @@ class UserCtrl {
     }
 
     searchAllUsers = async (req, res) => {
-        const users = await userDAO.getAllUsers();
+        const users = await userDAO.getAllUsersDAO(req.query);
         const statusCode = users ? 200 : 500;
         const response = users ? users : {error: `Erro ao buscar os usuários.`};
 
@@ -48,7 +48,7 @@ class UserCtrl {
     userLogin = async (req, res) => {
         const {user_email, user_password} = req.body;
 
-        const user = await userDAO.searchUserByEmail(user_email);
+        const user = await userDAO.searchUserByEmailDAO(user_email);
 
         if(user.error) {
             this.sendResponse(res, 500, {error: `Erro ao realizar o login.`});
@@ -67,6 +67,9 @@ class UserCtrl {
                 delete user[0].user_token;
                 delete user[0].user_password;
 
+                const user_ip = req.ip.replace('::ffff:', '');
+                await userDAO.userAccessDAO(user[0].user_id, user_email, user_ip, new Date())
+
                 const data = {success: true, user_token: token, userData: user};
                 this.sendResponse(res, 200, data);
                 return;
@@ -81,6 +84,17 @@ class UserCtrl {
         } else {
             this.sendResponse(res, 200, {alert: `Usuário ou senha inválidos.`});
         }
+    }
+
+    disableUser = async (req, res) => {
+        const userData = req.query;
+        const action = userData.action == 'S' ? 'ativado' : 'desativado';
+
+        const userUpdate = await userDAO.disableUserDAO(userData.user_id, userData.action);
+        const statusCode = userUpdate ? 200 : 500;
+        const response = userUpdate ? {success: `Usuário ${action} com sucesso.`} : {error: `Erro ao mudar o status do usuário.`};
+
+        this.sendResponse(res, statusCode, response);
     }
 
     sendResponse = (res, statusCode, msg) => {

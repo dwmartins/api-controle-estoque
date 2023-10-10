@@ -74,13 +74,22 @@ class UserDAO {
         }
     }
 
-    getAllUsers = async () => {
+    getAllUsersDAO = async (where) => {
+        this.where = '';
+
+        if(where.user_ativo == 'S') {
+            this.where += ` AND user_ativo = 'S'`;
+        } else if (where.user_ativo == 'N') {
+            this.where += ` AND user_ativo = 'N'`;
+        }
+
         try {
             this.sql = `SELECT *
                         FROM users 
-                        WHERE user_ativo = 'S'
-                        AND user_delete IS NULL`;
-            
+                        WHERE
+                        user_delete IS NULL
+                        ${this.where}`;
+
             const users = await db.pool.query(this.sql);
             return users[0];
         } catch (error) {
@@ -89,7 +98,7 @@ class UserDAO {
         }
     }
     
-    existingEmail = async (user_email) => {
+    existingEmailDAO = async (user_email) => {
         try {
             this.sql = `SELECT user_email FROM users WHERE user_email = ?`;
 
@@ -101,7 +110,7 @@ class UserDAO {
         }
     }
 
-    searchUserByEmail = async (user_email) => {
+    searchUserByEmailDAO = async (user_email) => {
         try {
             this.sql = ` SELECT *
                             FROM users
@@ -115,6 +124,41 @@ class UserDAO {
         } catch (error) {
             logger.log('error', `Erro ao buscar o usuário pelo e-mail: ${error.message}`);
             return {error: error};
+        }
+    }
+
+    userAccessDAO = async (user_id, user_email, user_ip, user_acesso_date) => {
+        try {
+            this.sql = `INSERT INTO user_acesso (aces_user_id, aces_user_email, aces_user_ip, aces_createdAt) VALUES (?, ?, ?, ?)`;
+            const values = [user_id, user_email, user_ip, user_acesso_date];
+
+            await db.pool.query(this.sql, values);
+            return true;
+        } catch (error) {
+            logger.log('error', `Erro ao salvar o acesso do usuário: ${error.message}`);
+            return false;
+        }
+    }
+
+    disableUserDAO = async (user_id, action) => {
+        try {
+            this.sql = `UPDATE users
+                        SET
+                            user_ativo = ?,
+                            user_updateAt = ?
+                        WHERE user_id = ?`;
+
+            const values = [
+                action,
+                new Date(),
+                user_id
+            ];
+
+            await db.pool.query(this.sql, values);
+            return true;
+        } catch (error) {
+            logger.log('error', `Erro ao desabilitar/habilitar o usuário: ${error.message}`);
+            return false;
         }
     }
 }
