@@ -130,6 +130,28 @@ class UserDAO {
             return false;
         }
     }
+
+    disableUserDAO = async (user_id, action) => {
+        try {
+            this.sql = `UPDATE users
+                        SET
+                            user_ativo = ?,
+                            user_updateAt = ?
+                        WHERE user_id = ?`;
+
+            const values = [
+                action,
+                new Date(),
+                user_id
+            ];
+
+            await db.pool.query(this.sql, values);
+            return true;
+        } catch (error) {
+            logger.log('error', `Erro ao desabilitar/habilitar o usuário: ${error.message}`);
+            return false;
+        }
+    }
 }
 
 module.exports = new UserDAO();

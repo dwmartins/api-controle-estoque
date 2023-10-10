@@ -86,6 +86,17 @@ class UserCtrl {
         }
     }
 
+    disableUser = async (req, res) => {
+        const userData = req.query;
+        const action = userData.action == 'S' ? 'ativado' : 'desativado';
+
+        const userUpdate = await userDAO.disableUserDAO(userData.user_id, userData.action);
+        const statusCode = userUpdate ? 200 : 500;
+        const response = userUpdate ? {success: `Usuário ${action} com sucesso.`} : {error: `Erro ao mudar o status do usuário.`};
+
+        this.sendResponse(res, statusCode, response);
+    }
+
     sendResponse = (res, statusCode, msg) => {
         res.status(statusCode).json(msg);
     }
